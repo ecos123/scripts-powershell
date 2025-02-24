@@ -1,6 +1,8 @@
 # Definir o caminho correto da área de trabalho
 $desktopPath = [System.Environment]::GetFolderPath("Desktop")
-$outputFile = "$desktopPath\Wifi_List.txt"
+# Obter a data atual no formato YYYY-MM-DD
+$date = Get-Date -Format "yyyy-MM-dd"
+$outputFile = "$desktopPath\WiFi_List_$date.txt"
 
 # Verificar se a pasta existe
 if (!(Test-Path $desktopPath)) {
@@ -23,6 +25,9 @@ try {
     # Salvar o resultado no arquivo
     $wifiProfiles | Format-Table -AutoSize | Out-File -Encoding UTF8 $outputFile
     Write-Host "Arquivo salvo em: $outputFile" -ForegroundColor Green
+
+    # Abrir o arquivo gerado (utilizando o Bloco de Notas como exemplo)
+    Start-Process notepad.exe $outputFile
 } catch {
     Write-Host "Erro ao gerar lista de Wi-Fi: $_" -ForegroundColor Red
 }
