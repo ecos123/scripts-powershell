@@ -11,7 +11,7 @@ $disks = Get-CimInstance Win32_DiskDrive | Select-Object Model, MediaType, Size,
 # Coleta as informações da placa de vídeo
 $video = Get-CimInstance Win32_VideoController | Select-Object Caption, VideoProcessor, AdapterRAM
 
-# Coleta as informações da rede (incluindo Wi-Fi)
+# Coleta as informações de rede (incluindo Wi-Fi)
 $networkAdapters = Get-CimInstance Win32_NetworkAdapter | Where-Object {$_.NetEnabled -eq $true} | Select-Object Name, MACAddress, Speed
 
 # Coleta informações do sistema operacional
@@ -32,10 +32,16 @@ $inventory = New-Object PSObject -property @{
     ComputerSystem = $computerSystem
 }
 
+# Identifica o caminho para o Desktop do usuário
+$desktopPath = [System.IO.Path]::Combine($env:USERPROFILE, 'Desktop')
+
+# Cria o caminho completo para o arquivo XML
+$xmlFilePath = [System.IO.Path]::Combine($desktopPath, 'InventarioComputador.xml')
+
 # Converte o inventário para XML
 $inventoryXml = $inventory | ConvertTo-Xml -As String -Depth 5
 
-# Salva o XML em um arquivo
-$inventoryXml | Out-File "C:\Caminho\Para\Salvar\InventarioComputador.xml"
+# Salva o XML no desktop do usuário
+$inventoryXml | Out-File $xmlFilePath
 
-Write-Host "Inventário gerado com sucesso!"
+Write-Host "Inventário gerado com sucesso e salvo no Desktop!"
