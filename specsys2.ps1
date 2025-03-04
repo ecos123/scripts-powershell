@@ -35,13 +35,22 @@ $inventory = New-Object PSObject -property @{
 # Identifica o caminho para o Desktop do usuário
 $desktopPath = [System.IO.Path]::Combine($env:USERPROFILE, 'Desktop')
 
+# Verifica se o diretório do desktop existe
+if (-not (Test-Path $desktopPath)) {
+    Write-Host "Erro: Diretório do Desktop não encontrado!"
+    exit
+}
+
 # Cria o caminho completo para o arquivo XML
 $xmlFilePath = [System.IO.Path]::Combine($desktopPath, 'InventarioComputador.xml')
 
 # Converte o inventário para XML
 $inventoryXml = $inventory | ConvertTo-Xml -As String -Depth 5
 
-# Salva o XML no desktop do usuário
-$inventoryXml | Out-File $xmlFilePath
-
-Write-Host "Inventário gerado com sucesso e salvo no Desktop!"
+# Tenta salvar o arquivo XML
+try {
+    $inventoryXml | Out-File $xmlFilePath
+    Write-Host "Inventário gerado com sucesso e salvo no Desktop!"
+} catch {
+    Write-Host "Erro ao salvar o arquivo: $_"
+}
